@@ -29,7 +29,7 @@ class ActionContent(BaseModel):
 
 @app.get("/health")
 async def health_check():
-    return {"status": "online", "model": "qwen2.5:1.5b", "engine": "Ollama/RAG"}
+    return {"status": "online", "model": "llama3.2:3b", "engine": "Ollama/RAG+Whisper"}
 
 @app.post("/process", response_model=Dict)
 async def process_turn(request: MeetingTurnRequest):

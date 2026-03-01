@@ -53,7 +53,7 @@ def save_to_meeting_memory_file(speaker: str, transcript: str):
         f.write(f"[{_get_current_timestamp()}] {speaker}: {transcript}\n")
 
 # --- 4. Local LLM Integration (Ollama) ---
-MODEL_NAME = "qwen2.5:1.5b"
+MODEL_NAME = "llama3.2:3b"
 
 def ask_local_llm(prompt: str, json_format=True) -> str:
     """Sends a prompt to the local Ollama instance."""
@@ -67,7 +67,8 @@ def ask_local_llm(prompt: str, json_format=True) -> str:
         payload["format"] = "json"
         
     try:
-        response = httpx.post(url, json=payload, timeout=60.0)
+        # Increased timeout for the larger 3B model
+        response = httpx.post(url, json=payload, timeout=120.0)
         return response.json().get("response", "{}")
     except Exception as e:
         print(f"Error querying Ollama: {e}")

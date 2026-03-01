@@ -1,10 +1,10 @@
 import ollama
 import sys
 
-# We use Qwen 2.5 (1.5 Billion parameters). This model only requires
-# ~1.2 GB of RAM, meaning it will run comfortably on almost any laptop
-# without triggering out-of-memory errors, while still understanding JSON.
-MODEL_NAME = "qwen2.5:1.5b" 
+# We use Llama 3.2 (3 Billion parameters) for high IQ reasoning.
+# It requires ~2.5-3 GB of RAM, fitting within your hardware limits
+# while significantly improving conversation accuracy.
+MODEL_NAME = "llama3.2:3b" 
 
 def download_local_model():
     """
