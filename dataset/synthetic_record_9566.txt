@@ -1,0 +1,1 @@
+System Log: Server SRV-116 experienced a CPU spike event at 21:20. Resolution: rebooted instance.

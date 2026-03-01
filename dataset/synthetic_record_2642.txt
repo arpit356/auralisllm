@@ -1,0 +1,1 @@
+System Log: Server SRV-978 experienced a memory leak event at 07:16. Resolution: rebooted instance.

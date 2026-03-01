@@ -1,0 +1,1 @@
+System Log: Server SRV-850 experienced a network drop event at 02:13. Resolution: rebooted instance.

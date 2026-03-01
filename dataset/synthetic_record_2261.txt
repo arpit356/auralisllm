@@ -1,0 +1,1 @@
+System Log: Server SRV-480 experienced a network drop event at 01:40. Resolution: rebooted instance.

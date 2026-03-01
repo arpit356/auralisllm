@@ -1,0 +1,1 @@
+System Log: Server SRV-122 experienced a network drop event at 12:40. Resolution: rebooted instance.

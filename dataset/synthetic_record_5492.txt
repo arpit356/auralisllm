@@ -1,0 +1,1 @@
+System Log: Server SRV-560 experienced a network drop event at 13:10. Resolution: rebooted instance.

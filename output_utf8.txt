@@ -1,0 +1,3 @@
+﻿--- Starting Auralis Integrated Simulation (Model: qwen2.5:1.5b) ---
+
+[Turn] Alice: Hello everyone. Auralis, please note: Budget for Q3 is approved for $50k.

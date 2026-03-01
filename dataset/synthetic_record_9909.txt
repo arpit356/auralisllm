@@ -1,0 +1,1 @@
+System Log: Server SRV-886 experienced a CPU spike event at 23:15. Resolution: rebooted instance.

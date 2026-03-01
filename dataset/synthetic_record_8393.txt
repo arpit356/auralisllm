@@ -1,0 +1,1 @@
+System Log: Server SRV-675 experienced a CPU spike event at 02:10. Resolution: rebooted instance.

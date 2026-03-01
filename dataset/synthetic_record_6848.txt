@@ -1,0 +1,1 @@
+System Log: Server SRV-322 experienced a network drop event at 20:20. Resolution: rebooted instance.

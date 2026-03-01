@@ -1,0 +1,1 @@
+System Log: Server SRV-336 experienced a network drop event at 01:26. Resolution: rebooted instance.

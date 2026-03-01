@@ -1,0 +1,1 @@
+System Log: Server SRV-347 experienced a network drop event at 10:17. Resolution: rebooted instance.

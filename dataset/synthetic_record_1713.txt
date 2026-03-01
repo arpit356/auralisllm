@@ -1,0 +1,1 @@
+System Log: Server SRV-124 experienced a network drop event at 10:56. Resolution: rebooted instance.

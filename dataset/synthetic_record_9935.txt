@@ -1,0 +1,1 @@
+System Log: Server SRV-880 experienced a memory leak event at 04:34. Resolution: rebooted instance.

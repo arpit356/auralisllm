@@ -1,0 +1,1 @@
+System Log: Server SRV-379 experienced a network drop event at 01:18. Resolution: rebooted instance.

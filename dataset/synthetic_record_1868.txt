@@ -1,0 +1,1 @@
+System Log: Server SRV-687 experienced a memory leak event at 07:28. Resolution: rebooted instance.

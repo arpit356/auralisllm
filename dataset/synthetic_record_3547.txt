@@ -1,0 +1,1 @@
+System Log: Server SRV-295 experienced a network drop event at 18:29. Resolution: rebooted instance.

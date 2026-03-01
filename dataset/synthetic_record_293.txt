@@ -1,0 +1,1 @@
+System Log: Server SRV-672 experienced a memory leak event at 08:28. Resolution: rebooted instance.

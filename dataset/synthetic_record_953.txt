@@ -1,0 +1,1 @@
+System Log: Server SRV-274 experienced a network drop event at 00:42. Resolution: rebooted instance.

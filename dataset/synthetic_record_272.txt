@@ -1,0 +1,1 @@
+System Log: Server SRV-986 experienced a CPU spike event at 01:35. Resolution: rebooted instance.

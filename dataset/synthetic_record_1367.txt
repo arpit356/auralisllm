@@ -1,0 +1,1 @@
+System Log: Server SRV-871 experienced a CPU spike event at 08:44. Resolution: rebooted instance.

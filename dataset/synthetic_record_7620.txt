@@ -1,0 +1,1 @@
+System Log: Server SRV-203 experienced a CPU spike event at 08:18. Resolution: rebooted instance.

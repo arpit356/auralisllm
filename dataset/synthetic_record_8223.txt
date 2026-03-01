@@ -1,0 +1,1 @@
+System Log: Server SRV-890 experienced a CPU spike event at 22:09. Resolution: rebooted instance.

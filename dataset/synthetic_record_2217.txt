@@ -1,0 +1,1 @@
+System Log: Server SRV-749 experienced a network drop event at 03:40. Resolution: rebooted instance.

@@ -1,0 +1,1 @@
+System Log: Server SRV-856 experienced a network drop event at 01:12. Resolution: rebooted instance.

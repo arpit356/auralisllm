@@ -1,0 +1,1 @@
+System Log: Server SRV-385 experienced a CPU spike event at 18:46. Resolution: rebooted instance.

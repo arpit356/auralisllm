@@ -1,0 +1,1 @@
+System Log: Server SRV-380 experienced a memory leak event at 05:17. Resolution: rebooted instance.

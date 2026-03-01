@@ -1,0 +1,1 @@
+System Log: Server SRV-867 experienced a network drop event at 03:20. Resolution: rebooted instance.

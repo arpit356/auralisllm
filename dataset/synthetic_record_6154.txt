@@ -1,0 +1,1 @@
+System Log: Server SRV-949 experienced a network drop event at 04:30. Resolution: rebooted instance.

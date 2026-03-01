@@ -1,0 +1,1 @@
+System Log: Server SRV-281 experienced a CPU spike event at 00:48. Resolution: rebooted instance.

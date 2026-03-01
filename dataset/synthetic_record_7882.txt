@@ -1,0 +1,1 @@
+System Log: Server SRV-760 experienced a CPU spike event at 17:54. Resolution: rebooted instance.

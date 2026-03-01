@@ -1,0 +1,9 @@
+# Requirements for Auralis Portable Local LLM
+
+# Core LLM Engine
+ollama>=0.1.6
+
+# Local Knowledge Base (RAG)
+chromadb>=0.4.24
+sentence-transformers>=2.6.0
+langchain-text-splitters>=0.0.1

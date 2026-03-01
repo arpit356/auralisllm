@@ -1,0 +1,1 @@
+System Log: Server SRV-614 experienced a CPU spike event at 01:51. Resolution: rebooted instance.

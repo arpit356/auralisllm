@@ -1,0 +1,1 @@
+System Log: Server SRV-938 experienced a network drop event at 00:59. Resolution: rebooted instance.

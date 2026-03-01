@@ -1,0 +1,1 @@
+System Log: Server SRV-935 experienced a CPU spike event at 11:08. Resolution: rebooted instance.

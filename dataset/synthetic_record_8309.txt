@@ -1,0 +1,1 @@
+System Log: Server SRV-795 experienced a network drop event at 11:46. Resolution: rebooted instance.

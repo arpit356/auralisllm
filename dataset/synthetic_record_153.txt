@@ -1,0 +1,1 @@
+System Log: Server SRV-627 experienced a network drop event at 14:48. Resolution: rebooted instance.

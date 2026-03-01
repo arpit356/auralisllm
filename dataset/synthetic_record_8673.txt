@@ -1,0 +1,1 @@
+System Log: Server SRV-592 experienced a CPU spike event at 03:47. Resolution: rebooted instance.
