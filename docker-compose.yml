@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: auralis-brain
+    volumes:
+      - ollama_data:/root/.ollama
+    ports:
+      - "11434:11434"
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  model-downloader:
+    image: curlimages/curl:latest
+    container_name: auralis-model-init
+    depends_on:
+      ollama:
+        condition: service_healthy
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        echo "Pulling required models..."
+        curl -X POST http://ollama:11434/api/pull -d '{"name": "llama3.2:1b"}'
+        curl -X POST http://ollama:11434/api/pull -d '{"name": "llama3.2:3b"}'
+        echo "Models ready!"
+
+  auralis-api:
+    build: .
+    container_name: auralis-gateway
+    depends_on:
+      ollama:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./chroma_db:/app/chroma_db
+      - ./dataset:/app/dataset
+      - ./uploads:/app/uploads
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+      - PORT=8000
+    restart: unless-stopped
+
+volumes:
+  ollama_data:

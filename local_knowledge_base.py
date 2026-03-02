@@ -80,26 +80,38 @@ def build_knowledge_base():
             ids=ids[i:end_idx]
         )
     
-    print("✅ Local knowledge base built successfully!")
+    print("[OK] Local knowledge base built successfully!")
 
-def search_knowledge_base(query, n_results=5):
-    """Searches the local database for relevant text."""
-    if not os.path.exists(DB_DIR):
+# --- Global Cache for Performance ---
+CHROMA_CLIENT = None
+EMBEDDING_FUNCTION = None
+COLLECTION = None
+
+def get_collection():
+    """Helper to get a cached collection instance."""
+    global CHROMA_CLIENT, EMBEDDING_FUNCTION, COLLECTION
+    if COLLECTION is None:
+        if not os.path.exists(DB_DIR):
+            return None
+        CHROMA_CLIENT = chromadb.PersistentClient(path=DB_DIR)
+        EMBEDDING_FUNCTION = embedding_functions.SentenceTransformerEmbeddingFunction(model_name="all-MiniLM-L6-v2")
+        COLLECTION = CHROMA_CLIENT.get_collection(name=COLLECTION_NAME, embedding_function=EMBEDDING_FUNCTION)
+    return COLLECTION
+
+def search_knowledge_base(query, n_results=3):
+    """Searches the local database for relevant text with caching."""
+    collection = get_collection()
+    if not collection:
         return ""
         
     try:
-        chroma_client = chromadb.PersistentClient(path=DB_DIR)
-        sentence_transformer_ef = embedding_functions.SentenceTransformerEmbeddingFunction(model_name="all-MiniLM-L6-v2")
-        collection = chroma_client.get_collection(name=COLLECTION_NAME, embedding_function=sentence_transformer_ef)
-        
         results = collection.query(
             query_texts=[query],
             n_results=n_results
         )
         
         if results and results['documents'] and results['documents'][0]:
-            context = "\n---\n".join(results['documents'][0])
-            return context
+            return "\n---\n".join(results['documents'][0])
             
     except Exception as e:
         print(f"Error searching knowledge base: {e}")

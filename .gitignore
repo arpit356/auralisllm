@@ -1,0 +1,37 @@
+# Auralis AI - Git Ignore File
+# ==============================
+# This protects sensitive files from being accidentally uploaded to GitHub
+
+# CRITICAL: Never commit these!
+.env
+*.env
+
+# Large AI model files
+*.bin
+*.gguf
+*.pt
+*.onnx
+
+# User upload data
+uploads/
+
+# AI vector database (can be rebuilt)
+chroma_db/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+
+# Test output files
+*.txt.log
+diagnostic_report.txt
+final_test_report.txt
+test_healing_*.txt
+*_integrated_test.txt
+server_log_*.txt
+
+# IDE
+.vscode/
+.idea/

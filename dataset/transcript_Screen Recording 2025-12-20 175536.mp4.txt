@@ -1,10 +1,7 @@
 --- Transcript for Screen Recording 2025-12-20 175536.mp4 ---
-Processed on: 2026-03-01 12:36:07.274261
+Processed on: 2026-03-01 12:42:07.504248
+Duration: 63.45s | Word Count: 4
 
 [0.00s -> 28.00s]:  Thank you.
-[28.00s -> 33.76s]:  Warning calendar scheduling failed, invalid underscore grant, token has been expired or revoked
-[33.76s -> 40.88s]:  error, invalid underscore grant, error underscore description, token has been expired or revoked.
-[40.88s -> 46.34s]:  Warning email sending failed, invalid underscore grant, token has been expired or revoked
-[46.34s -> 53.40s]:  error, invalid underscore grant, error underscore description, token has been expired or revoked.
-[53.40s -> 56.40s]:  White heavy check mark your meeting is set.
-[56.40s -> 63.40s]:  What else can I help you with?
+[28.00s -> 58.00s]:  *********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************
+[58.00s -> 60.00s]:  You

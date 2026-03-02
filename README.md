@@ -64,6 +64,12 @@ To expose Auralis to a web frontend or other apps:
 
 ---
 
+## ☁️ Deployment
+
+For information on how to deploy Auralis to the cloud (AWS, GCP, etc.) or a private server using **Docker**, see the [**Deployment Guide**](deployment_guide.md).
+
+---
+
 ## 📡 API Endpoints
 
 The API runs by default on `http://localhost:8000`.

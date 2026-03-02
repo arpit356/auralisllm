@@ -16,7 +16,7 @@ def download_local_model():
     try:
          # This command asks the local Ollama server to fetch the model
         ollama.pull(MODEL_NAME)
-        print(f"\n✅ Successfully pulled '{MODEL_NAME}' into your local Ollama environment.")
+        print(f"\n[OK] Successfully pulled '{MODEL_NAME}' into your local Ollama environment.")
         print("You are ready to run Auralis offline.")
     except Exception as e:
         print(f"\n❌ Error pulling model: {e}")

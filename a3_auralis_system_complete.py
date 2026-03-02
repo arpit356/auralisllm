@@ -41,7 +41,7 @@ def add_memory_item(category: str, data: dict):
     if category in meeting_memory_global:
         data["timestamp"] = _get_current_timestamp()
         meeting_memory_global[category].append(data)
-        print(f"✅ Added to {category}: {json.dumps(data, indent=2)}")
+        print(f"[Memory] Added to {category}: {json.dumps(data, indent=2)}")
 
 # --- 3. Persistent Memory Logging (Saving to Text File) ---
 def save_to_meeting_memory_file(speaker: str, transcript: str):
@@ -53,26 +53,33 @@ def save_to_meeting_memory_file(speaker: str, transcript: str):
         f.write(f"[{_get_current_timestamp()}] {speaker}: {transcript}\n")
 
 # --- 4. Local LLM Integration (Ollama) ---
-MODEL_NAME = "llama3.2:3b"
+CORE_MODEL = "llama3.2:3b"      # For deep reasoning/answers
+FAST_MODEL = "llama3.2:1b"      # For fast & reliable categorization
+OLLAMA_HOST = os.environ.get("OLLAMA_HOST", "http://localhost:11434")
 
-def ask_local_llm(prompt: str, json_format=True) -> str:
-    """Sends a prompt to the local Ollama instance."""
-    url = "http://localhost:11434/api/generate"
+def ask_local_llm(prompt: str, json_format=True, max_tokens=100, model=CORE_MODEL) -> str:
+    """Sends a prompt to Ollama with latency-optimized options."""
+    url = f"{OLLAMA_HOST}/api/generate"
     payload = {
-        "model": MODEL_NAME,
+        "model": model,
         "prompt": prompt,
-        "stream": False
+        "stream": False,
+        "options": {
+            "num_predict": max_tokens,  # Limit output length for speed
+            "temperature": 0,           # Deterministic for speed
+            "num_thread": 4              # Optimize for CPU
+        }
     }
     if json_format:
         payload["format"] = "json"
         
     try:
-        # Increased timeout for the larger 3B model
         response = httpx.post(url, json=payload, timeout=120.0)
-        return response.json().get("response", "{}")
+        text = response.json().get("response", "").strip()
+        return text if text else ("{}" if json_format else "I'm listening.")
     except Exception as e:
-        print(f"Error querying Ollama: {e}")
-        return "{}"
+        print(f"Error querying Ollama ({model}): {e}")
+        return "{}" if json_format else "I'm having trouble connecting."
 
 # --- 5. Main Decision Logic ---
 def process_meeting_turn(speaker: str, transcript: str) -> dict:
@@ -83,63 +90,75 @@ def process_meeting_turn(speaker: str, transcript: str) -> dict:
     # Save to text log for future RAG
     save_to_meeting_memory_file(speaker, transcript)
 
-    # 1. Deterministic Check: Force RAG+Speak for direct Auralis summary requests
+    # 1. Deterministic Check: Force RAG+Speak for direct Auralis questions/requests
     lower_t = transcript.lower()
-    if "auralis" in lower_t and ("summarize" in lower_t or "goal" in lower_t):
-        print(f"\n[Auralis] Detected direct request for summary. Performing RAG...")
-        rag_context = search_knowledge_base("main goal privacy policy", n_results=5)
-        prompt = f"Background: {rag_context}\n\nTask: Auralis, summarize our main goal for {speaker} using ONLY the background info above."
-        vocal_response = ask_local_llm(prompt, json_format=False)
-        return {"mode": "speak", "content": vocal_response}
+    if "auralis" in lower_t:
+        is_question = "?" in lower_t or any(q in lower_t for q in ["what", "how", "who", "where", "why", "summarize", "goal", "can you"])
+        if is_question:
+            print(f"\n[Auralis] Detected direct question/task: '{transcript}'")
+            # Log it first
+            add_memory_item("questions", {"item": transcript, "asked_by": speaker})
+            
+            # Perform RAG lookup
+            rag_context = search_knowledge_base(transcript, n_results=5)
+            prompt = f"Background: {rag_context}\n\nTask: Auralis, answer this: '{transcript}' based on the background. If the info isn't there, use your persona knowledge. Persona: {auralis_config['persona']['role']}"
+            vocal_response = ask_local_llm(prompt, json_format=False)
+            return {"mode": "speak", "content": vocal_response}
 
-    # 2. General AI Decision for Memory Actions
-    system_prompt = f"""
-You are Auralis, an AI Meeting Assistant.
-Persona: {auralis_config['persona']['role']}
-
-EXAMPLES:
-- "Decision: Budget approved" -> {{"action": "add_decision", "data": {{"item": "Budget approved", "made_by": "Speaker"}}}}
-- "Alice, do X" -> {{"action": "add_action_item", "data": {{"item": "Do X", "assigned_to": "Alice"}}}}
-- "Who did this?" -> {{"action": "add_question", "data": {{"item": "Who did this?", "asked_by": "Speaker"}}}}
-
-TRANSCRIPT: "{speaker}: {transcript}"
-
-TASK:
-Categorize this transcript line. 
-- If Decision -> "add_decision"
-- If Task/Action Item -> "add_action_item"
-- If Question -> "add_question"
-- Else -> "silent"
-
-Return ONLY valid JSON:
-{{
-  "action": "add_question" | "add_decision" | "add_action_item" | "silent",
-  "data": {{ "item": "The specific text to remember", "assigned_to": "Name", "made_by": "{speaker}", "asked_by": "{speaker}" }}
-}}
-"""
+    # 2. Fast-Path Heuristic: Keywords (Deteriministic & Instant)
+    if any(k in lower_t for k in ["decision:", "decided:", "approved", "confirmed", "agreed"]):
+        item = transcript.split(":", 1)[1].strip() if ":" in transcript else transcript
+        data = {"item": item, "made_by": speaker}
+        add_memory_item("decisions", data)
+        return {"mode": "silent", "content": "Acknowledged: Decision recorded."}
     
-    decision_json = ask_local_llm(system_prompt, json_format=True)
+    if any(k in lower_t for k in ["task:", "action:", "todo:", "please", "assigned", "responsible"]):
+        item = transcript.split(":", 1)[1].strip() if ":" in transcript else transcript
+        data = {"item": item, "made_by": speaker}
+        add_memory_item("action_items", data)
+        return {"mode": "silent", "content": "Noted: Action item saved."}
+
+    # 3. Skip AI for short chitchat (< 4 words)
+    words = lower_t.split()
+    if len(words) < 4 and not any(k in lower_t for k in ["?", "who", "when", "how", "why"]):
+        return {"mode": "silent", "content": "Noted."}
+
+    # 4. Optimized AI Decision (Using TinyLlama for a bit more 'IQ' than 0.5B but still sub-3s)
+    system_prompt = f"""Task: Categorize this meeting line.
+Transcript: "{speaker}: {transcript}"
+
+Is this a:
+A) Action Item (Task to do)
+B) Decision (Something decided/approved)
+C) Question (Something asked)
+D) Silent (General talk, thanks, hello)
+
+Return valid JSON: {{"action": "add_action_item" | "add_decision" | "add_question" | "silent", "data": {{"item": "summary", "made_by": "{speaker}"}}}}"""
+    
+    # Use TINYLLAMA for better 1B categorization (fast and reliable)
+    decision_json = ask_local_llm(system_prompt, json_format=True, max_tokens=60, model="tinyllama")
     try:
         decision = json.loads(decision_json)
         action = decision.get("action", "silent")
         data = decision.get("data", {})
         
-        # Dispatch to memory
         if action == "add_question":
             add_memory_item("questions", data)
+            return {"mode": "silent", "content": f"Question saved."}
         elif action == "add_decision":
             add_memory_item("decisions", data)
+            return {"mode": "silent", "content": f"Decision recorded."}
         elif action == "add_action_item":
             add_memory_item("action_items", data)
+            return {"mode": "silent", "content": f"Action item saved."}
             
-        return {"mode": "silent", "content": f"Action taken: {action}"}
-        
-    except Exception as e:
-        return {"mode": "silent", "content": f"Decision error: {e}"}
+        return {"mode": "silent", "content": "Noted."}
+    except:
+        return {"mode": "silent", "content": "Listening."}
 
 # --- 6. Full Simulation Loop ---
 if __name__ == "__main__":
-    print(f"--- Starting Auralis Integrated Simulation (Model: {MODEL_NAME}) ---")
+    print(f"--- Starting Auralis Integrated Simulation (Model: {CORE_MODEL}) ---")
     
     turns = [
         ("Alice", "Hello everyone. Auralis, please note: Budget for Q3 is approved for $50k."),
